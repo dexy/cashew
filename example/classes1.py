@@ -1,9 +1,9 @@
 ### "imports"
-from classes import Data
+from .classes import Data
 
 ### "other-imports"
 import csv
-import StringIO
+import io
 import json
 
 ### "csv-subclass"
@@ -14,8 +14,8 @@ class Csv(Data):
     aliases = ['csv']
 
     def present(self):
-        s = StringIO.StringIO()
-        writer = csv.DictWriter(s, self.data[0].keys())
+        s = io.StringIO()
+        writer = csv.DictWriter(s, list(self.data[0].keys()))
 
         writer.writeheader()
         writer.writerows(self.data)

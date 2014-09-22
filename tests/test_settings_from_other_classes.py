@@ -1,7 +1,11 @@
 from cashew import Plugin, PluginMeta
+from six import add_metaclass
 
+@add_metaclass(PluginMeta)
 class Report(Plugin):
-    __metaclass__ = PluginMeta
+    """
+    Report Base Class
+    """
     _settings = {}
     _other_class_settings = {
             'document' : {
@@ -9,8 +13,11 @@ class Report(Plugin):
                 }
             }
 
+@add_metaclass(PluginMeta)
 class Filter(Plugin):
-    __metaclass__ = PluginMeta
+    """
+    Filter Base Class
+    """
     _settings = {}
     _other_class_settings = {
             'document' : {
@@ -18,8 +25,11 @@ class Filter(Plugin):
                 }
             }
 
+@add_metaclass(PluginMeta)
 class Document(Plugin):
-    __metaclass__ = PluginMeta
+    """
+    Document Base Class
+    """
     aliases = ['document']
 
 class SomeKindOfDocument(Document):

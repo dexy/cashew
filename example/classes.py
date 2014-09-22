@@ -1,12 +1,13 @@
 ### "imports"
 from cashew import Plugin, PluginMeta
+from six import add_metaclass
 
 ### "create-plugin-base-class"
+@add_metaclass(PluginMeta)
 class Data(Plugin):
     """
     Base class for plugins which present data in various ways.
     """
-    __metaclass__ = PluginMeta
 
     ### "methods"
     def __init__(self, data):

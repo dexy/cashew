@@ -1,10 +1,11 @@
 ### "imports"
-from classes import Data
+from .classes import Data
 
 ### "other-imports"
 import csv
-import StringIO
+import io
 import json
+import six
 
 ### "csv-subclass"
 class Csv(Data):
@@ -32,14 +33,14 @@ class Csv(Data):
 
     ### "csv-present"
     def present(self):
-        s = StringIO.StringIO()
+        s = io.StringIO()
 
         kwargs = dict((k, v)
-                for k, v in self.setting_values().iteritems()
+                for k, v in six.iteritems(self.setting_values())
                 if v and (k in self.setting('csv-settings'))
                 )
 
-        writer = csv.DictWriter(s, self.data[0].keys(), **kwargs)
+        writer = csv.DictWriter(s, list(self.data[0].keys()), **kwargs)
 
         if self.setting('write-header'):
             writer.writeheader()
@@ -59,4 +60,3 @@ class Json(Data):
 
     def present(self):
         return json.dumps(self.data) 
-

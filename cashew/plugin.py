@@ -1,10 +1,14 @@
+from cashew.exceptions import InactivePlugin
+from cashew.exceptions import InternalCashewException
+from cashew.exceptions import NoPlugin
+from cashew.exceptions import UserFeedback
+from six import string_types
 import inflection
 import inspect
 import os
+import six
 import sys
 import yaml
-
-from cashew.exceptions import *
 
 class Plugin(object):
     """
@@ -51,12 +55,12 @@ class Plugin(object):
     def initialize_settings_from_raw_kwargs(self, raw_kwargs):
         hyphen_settings = dict(
                 (k, v)
-                for k, v in raw_kwargs.iteritems()
+                for k, v in six.iteritems(raw_kwargs)
                 if k in self._instance_settings)
 
         underscore_settings = dict(
                 (k.replace("_", "-"), v)
-                for k, v in raw_kwargs.iteritems()
+                for k, v in six.iteritems(raw_kwargs)
                 if k.replace("_", "-") in self._instance_settings)
 
         self.update_settings(hyphen_settings)
@@ -88,7 +92,7 @@ class Plugin(object):
 
         if hasattr(value, 'startswith') and value.startswith("$"):
             env_var = value.lstrip("$")
-            if os.environ.has_key(env_var):
+            if env_var in os.environ:
                 return os.getenv(env_var)
             else:
                 msg = "'%s' is not defined in your environment" % env_var
@@ -109,7 +113,7 @@ class Plugin(object):
 
         return dict(
                 (k, v[1])
-                for k, v in self._instance_settings.iteritems()
+                for k, v in six.iteritems(self._instance_settings)
                 if not k in skip)
 
     def update_settings(self, new_settings):
@@ -130,10 +134,10 @@ class Plugin(object):
         Preferable to use update_settings (without leading _) in code to do the
         right thing and always have docstrings.
         """
-        for raw_setting_name, value in new_settings.iteritems():
+        for raw_setting_name, value in six.iteritems(new_settings):
             setting_name = raw_setting_name.replace("_", "-")
 
-            setting_already_exists = self._instance_settings.has_key(setting_name)
+            setting_already_exists = setting_name in self._instance_settings
             value_is_list_len_2 = isinstance(value, list) and len(value) == 2
             treat_as_tuple = not setting_already_exists and value_is_list_len_2
 
@@ -141,7 +145,7 @@ class Plugin(object):
                 self._instance_settings[setting_name] = value
 
             else:
-                if not self._instance_settings.has_key(setting_name):
+                if setting_name not in self._instance_settings:
                     if enforce_helpstring:
                         msg = "You must specify param '%s' as a tuple of (helpstring, value)"
                         raise InternalCashewException(msg % setting_name)
@@ -176,17 +180,18 @@ class PluginMeta(type):
     def __init__(cls, name, bases, attrs):
         assert issubclass(cls, Plugin), "%s should inherit from class Plugin" % name
 
-        if '__metaclass__' in attrs:
+        if not hasattr(cls, 'plugins'):
             cls.plugins = {}
-        elif hasattr(cls, 'aliases'):
+
+        if hasattr(cls, 'aliases'):
             cls.register_plugin(cls.aliases, cls, {})
 
         cls.register_other_class_settings()
 
     def register_other_class_settings(cls):
         if hasattr(cls, '_other_class_settings') and cls._other_class_settings:
-            for other_class_key, other_class_settings in cls._other_class_settings.iteritems():
-                if not PluginMeta._store_other_class_settings.has_key(other_class_key):
+            for other_class_key, other_class_settings in six.iteritems(cls._other_class_settings):
+                if other_class_key not in PluginMeta._store_other_class_settings:
                     PluginMeta._store_other_class_settings[other_class_key] = {}
 
                 PluginMeta._store_other_class_settings[other_class_key].update(other_class_settings)
@@ -197,7 +202,7 @@ class PluginMeta(type):
 
         # Ensure 'aliases' and 'help' settings are set.
         settings['aliases'] = ('aliases', aliases)
-        if not settings.has_key('help'):
+        if 'help' not in settings:
             docstring = klass.check_docstring()
             settings['help'] = ("Helpstring for plugin.", docstring)
 
@@ -217,7 +222,7 @@ class PluginMeta(type):
         Make sure we don't attempt to iterate over an alias string thinking
         it's an array.
         """
-        if isinstance(alias_or_aliases, basestring):
+        if isinstance(alias_or_aliases, string_types):
             return [alias_or_aliases]
         else:
             return alias_or_aliases
@@ -229,7 +234,7 @@ class PluginMeta(type):
         if isinstance(class_or_class_name, type):
             return class_or_class_name
 
-        elif isinstance(class_or_class_name, basestring):
+        elif isinstance(class_or_class_name, string_types):
             if ":" in class_or_class_name:
                 mod_name, class_name = class_or_class_name.split(":")
 
@@ -264,7 +269,7 @@ class PluginMeta(type):
         if max_line_length:
             for i, line in enumerate(docstring.splitlines()):
                 if len(line) > max_line_length:
-                    msg = "line %s of %s is %s chars too long" 
+                    msg = "docstring line %s of %s is %s chars too long" 
                     args = (i, cls.__name__, len(line) - max_line_length)
                     raise Exception(msg % args)
 
@@ -274,15 +279,15 @@ class PluginMeta(type):
         return alias
 
     def register_plugins(cls, plugin_info):
-        for k, v in plugin_info.iteritems():
+        for k, v in six.iteritems(plugin_info):
             cls.register_plugin(k.split("|"), v[0], v[1])
 
     def register_plugins_from_dict(cls, yaml_content, install_dir=None):
-        for alias, info_dict in yaml_content.iteritems():
+        for alias, info_dict in six.iteritems(yaml_content):
             if ":" in alias:
                 _, alias = alias.split(":")
 
-            if info_dict.has_key('class'):
+            if 'class' in info_dict:
                 class_name = info_dict['class']
                 del info_dict['class']
             else:
