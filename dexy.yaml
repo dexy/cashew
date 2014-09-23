@@ -1,9 +1,7 @@
 example/*.adoc|jinja|asciidoctor:
     - .py|idio|asciisyn:
         - idio: {'ext' : '.txt'}
-    - cashew/*.py|pydoc:
-        - output: True
-    - tests/*.py|pydoc:
-        - output: True
+    - cashew/*.py|pyparse
+    - tests/*.py|pyparse
     - example/usage*.py|idio|pycon|asciisyn:
         - example/*.py
