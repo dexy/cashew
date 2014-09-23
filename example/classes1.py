@@ -1,5 +1,5 @@
 ### "imports"
-from .classes import Data
+from classes import Data
 
 ### "other-imports"
 import csv
@@ -15,7 +15,7 @@ class Csv(Data):
 
     def present(self):
         s = io.StringIO()
-        writer = csv.DictWriter(s, list(self.data[0].keys()))
+        writer = csv.DictWriter(s, fieldnames=[unicode(k) for k in self.data[0].keys()])
 
         writer.writeheader()
         writer.writerows(self.data)

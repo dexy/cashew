@@ -2,25 +2,24 @@
 :toc:
 :source-highlighter: pygments
 
-{% macro src(section, language="python") %}
+{% macro pyparse(filename, section, language="python") %}
 [source,{{ language }}]
 ----
-{{ d['/cashew/plugin.py|pydoc'][section] }}
+{{ d[filename + "|pyparse"][section] }}
 ----
+{% endmacro %}
+
+
+{% macro src(section, language="python") %}
+{{ pyparse("/cashew/plugin.py", section) }}
 {% endmacro %}
 
 {% macro test(section, language="python") %}
-[source,{{ language }}]
-----
-{{ d['/tests/test_cashew.py|pydoc'][section] }}
-----
+{{ pyparse("/tests/test_cashew.py", section) }}
 {% endmacro %}
 
 {% macro test2(section, language="python") %}
-[source,{{ language }}]
-----
-{{ d['/tests/test_settings_from_other_classes.py|pydoc'][section] }}
-----
+{{ pyparse("/tests/test_settings_from_other_classes.py", section) }}
 {% endmacro %}
 
 == Introduction
@@ -93,10 +92,7 @@ To actually use plugins, `PluginMeta` defines a `create_instance` factory
 method which takes an alias as its argument, and optionally accepts positional
 and keyword arguments to be passed to a constructor.
 
-[source,python]
-----
-{{ d['/cashew/plugin.py|pydoc']['PluginMeta.create_instance:source'] }}
-----
+{{ src("PluginMeta.create_instance:source") }}
 
 Here's an example of using the `create_instance` method for a plugin based on
 the `Data` class. As we saw above, the constructor `__init__` takes a single

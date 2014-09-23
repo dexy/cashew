@@ -1,15 +1,15 @@
 ### "import"
-from .classes import Data
+from classes import Data
 
 ### "plugins"
 Data.plugins
-from . import classes1
+import classes1
 Data.plugins
 
 ### "example-data"
 example_data = [{
-    "foo" : 123,
-    "bar" : 456
+    u"foo" : 123,
+    u"bar" : 456
     }]
 
 ### "json-example-type"
