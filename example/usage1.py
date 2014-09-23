@@ -1,9 +1,9 @@
 ### "import"
-from classes import Data
+from example.classes import Data
 
 ### "plugins"
 Data.plugins
-import classes1
+import example.classes1
 Data.plugins
 
 ### "example-data"

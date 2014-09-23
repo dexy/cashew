@@ -1,10 +1,11 @@
 ### "imports"
-from classes import Data
+from example.classes import Data
 
 ### "other-imports"
-import StringIO # Can't use io.StringIO, csv lib does not support unicode
 import csv
 import json
+
+from example.utils import tempdir
 
 ### "csv-subclass"
 class Csv(Data):
@@ -14,14 +15,17 @@ class Csv(Data):
     aliases = ['csv']
 
     def present(self):
-        s = StringIO.StringIO()
-        writer = csv.DictWriter(s, self.data[0].keys())
+        with tempdir():
+            with open("dictionary.csv", "w") as f:
+                headers = list(self.data[0].keys())
+                writer = csv.DictWriter(f, headers)
 
-        writer.writeheader()
-        writer.writerows(self.data)
+                writer.writeheader()
+                writer.writerows(self.data)
+
+            with open("dictionary.csv", "r") as f:
+                return f.read()
         
-        return s.getvalue()
-
 ### "json-subclass"
 class Json(Data):
     """

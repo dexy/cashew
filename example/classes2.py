@@ -1,8 +1,8 @@
 ### "imports"
-from classes import Data
+from example.classes import Data
 
 ### "other-imports"
-import StringIO # Can't use io.StringIO, csv lib does not support unicode
+from example.utils import tempdir
 import csv
 import json
 import six
@@ -33,20 +33,22 @@ class Csv(Data):
 
     ### "csv-present"
     def present(self):
-        s = StringIO.StringIO()
-
         kwargs = dict((k, v)
                 for k, v in six.iteritems(self.setting_values())
                 if v and (k in self.setting('csv-settings'))
                 )
 
-        writer = csv.DictWriter(s, list(self.data[0].keys()), **kwargs)
+        with tempdir():
+            with open("dictionary.csv", "w") as f:
+                writer = csv.DictWriter(f, list(self.data[0].keys()), **kwargs)
 
-        if self.setting('write-header'):
-            writer.writeheader()
-        writer.writerows(self.data)
-        
-        return s.getvalue()
+                if self.setting('write-header'):
+                    writer.writeheader()
+
+                writer.writerows(self.data)
+
+            with open("dictionary.csv", "r") as f:
+                return f.read()
 
 ### "json-subclass"
 class Json(Data):

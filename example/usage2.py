@@ -1,11 +1,11 @@
 import pprint 
 
 ### "import"
-from classes import Data
+from example.classes import Data
 
 ### "plugins"
 Data.plugins
-import classes2
+import example.classes2
 Data.plugins
 
 ### "example-data"
