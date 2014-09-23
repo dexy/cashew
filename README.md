@@ -6,3 +6,5 @@ For example:
 https://github.com/dexy/dexy/blob/develop/dexy/filters/filters.yaml
 
 Plugins have self-describing settings with default values.
+
+Cashew is compatible with Python 2.6+ and Python 3.
