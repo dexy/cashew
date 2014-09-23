@@ -1,9 +1,9 @@
 ### "imports"
-from .classes import Data
+from classes import Data
 
 ### "other-imports"
+import StringIO # Can't use io.StringIO, csv lib does not support unicode
 import csv
-import io
 import json
 import six
 
@@ -33,7 +33,7 @@ class Csv(Data):
 
     ### "csv-present"
     def present(self):
-        s = io.StringIO()
+        s = StringIO.StringIO()
 
         kwargs = dict((k, v)
                 for k, v in six.iteritems(self.setting_values())

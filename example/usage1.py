@@ -8,8 +8,8 @@ Data.plugins
 
 ### "example-data"
 example_data = [{
-    u"foo" : 123,
-    u"bar" : 456
+    "foo" : 123,
+    "bar" : 456
     }]
 
 ### "json-example-type"

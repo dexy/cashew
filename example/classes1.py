@@ -2,8 +2,8 @@
 from classes import Data
 
 ### "other-imports"
+import StringIO # Can't use io.StringIO, csv lib does not support unicode
 import csv
-import io
 import json
 
 ### "csv-subclass"
@@ -14,8 +14,8 @@ class Csv(Data):
     aliases = ['csv']
 
     def present(self):
-        s = io.StringIO()
-        writer = csv.DictWriter(s, fieldnames=[unicode(k) for k in self.data[0].keys()])
+        s = StringIO.StringIO()
+        writer = csv.DictWriter(s, self.data[0].keys())
 
         writer.writeheader()
         writer.writerows(self.data)
