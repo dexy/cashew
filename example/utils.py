@@ -1,5 +1,3 @@
-from six import print_
-
 import os
 import shutil
 import tempfile
@@ -15,8 +13,8 @@ class tempdir(object):
         try:
             shutil.rmtree(self.tempdir)
         except Exception as e:
-            print_(e)
-            print_("was not able to remove tempdir '%s'" % self.tempdir)
+            print(e)
+            print(f"was not able to remove tempdir '{self.tempdir}'")
 
     def __enter__(self):
         self.make_temp_dir()

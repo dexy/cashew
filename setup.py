@@ -11,12 +11,11 @@ setup(
             },
         include_package_data = True,
         install_requires = [
-            'six',
             'inflection>=0.2.0',
             'PyYAML'
             ],
         name='cashew',
         packages=find_packages(),
         url='http://dexy.github.io/cashew/',
-        version="0.2.8d"
+        version="0.3.0"
         )

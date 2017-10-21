@@ -2,9 +2,9 @@ from cashew.exceptions import InternalCashewException
 from cashew.exceptions import UserFeedback
 from cashew.plugin import Plugin, PluginMeta
 from example.classes2 import Csv
-from six import add_metaclass
-from six import with_metaclass
 import example.classes
+import example.classes2
+
 
 class Data(example.classes.Data):
     """
@@ -12,12 +12,11 @@ class Data(example.classes.Data):
     """
     @classmethod
     def load_class_from_locals(cls, class_name):
-        from example.classes2 import *
-        return locals()[class_name]
+        return example.classes2.__dict__[class_name]
 
 def test_must_inherit_from_plugin_class():
     try:
-        class BadPlugin(with_metaclass(PluginMeta, object)):
+        class BadPlugin(object, metaclass=PluginMeta):
             pass
 
         raise Exception("should not get here")
@@ -87,8 +86,7 @@ def test_register_plugins_from_dict():
     assert bar.setting('help') == "This is the bar plugin."
     assert altbar.setting('help') == "This is the bar plugin."
 
-@add_metaclass(PluginMeta)
-class TestSettingsBase(Plugin):
+class TestSettingsBase(Plugin, metaclass=PluginMeta):
     """
     Base class for settings class used in tests.
     """

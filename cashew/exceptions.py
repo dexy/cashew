@@ -1,5 +1,3 @@
-from six import string_types
-
 class CashewException(Exception):
     pass
 
@@ -11,7 +9,7 @@ class UserFeedback(CashewException):
 
 class InactivePlugin(UserFeedback):
     def __init__(self, plugin_instance_or_alias):
-        if isinstance(plugin_instance_or_alias, string_types):
+        if isinstance(plugin_instance_or_alias, str):
             self.alias = plugin_instance_or_alias
         else:
             self.alias = plugin_instance_or_alias.alias

@@ -1,8 +1,6 @@
 from cashew import Plugin, PluginMeta
-from six import add_metaclass
 
-@add_metaclass(PluginMeta)
-class Report(Plugin):
+class Report(Plugin, metaclass=PluginMeta):
     """
     Report Base Class
     """
@@ -13,8 +11,7 @@ class Report(Plugin):
                 }
             }
 
-@add_metaclass(PluginMeta)
-class Filter(Plugin):
+class Filter(Plugin, metaclass=PluginMeta):
     """
     Filter Base Class
     """
@@ -25,8 +22,7 @@ class Filter(Plugin):
                 }
             }
 
-@add_metaclass(PluginMeta)
-class Document(Plugin):
+class Document(Plugin, metaclass=PluginMeta):
     """
     Document Base Class
     """

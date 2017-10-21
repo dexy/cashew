@@ -2,11 +2,9 @@ from cashew.exceptions import InactivePlugin
 from cashew.exceptions import InternalCashewException
 from cashew.exceptions import NoPlugin
 from cashew.exceptions import UserFeedback
-from six import string_types
 import inflection
 import inspect
 import os
-import six
 import sys
 import yaml
 
@@ -55,12 +53,12 @@ class Plugin(object):
     def initialize_settings_from_raw_kwargs(self, raw_kwargs):
         hyphen_settings = dict(
                 (k, v)
-                for k, v in six.iteritems(raw_kwargs)
+                for k, v in raw_kwargs.items()
                 if k in self._instance_settings)
 
         underscore_settings = dict(
                 (k.replace("_", "-"), v)
-                for k, v in six.iteritems(raw_kwargs)
+                for k, v in raw_kwargs.items()
                 if k.replace("_", "-") in self._instance_settings)
 
         self.update_settings(hyphen_settings)
@@ -113,7 +111,7 @@ class Plugin(object):
 
         return dict(
                 (k, v[1])
-                for k, v in six.iteritems(self._instance_settings)
+                for k, v in self._instance_settings.items()
                 if not k in skip)
 
     def update_settings(self, new_settings):
@@ -134,7 +132,7 @@ class Plugin(object):
         Preferable to use update_settings (without leading _) in code to do the
         right thing and always have docstrings.
         """
-        for raw_setting_name, value in six.iteritems(new_settings):
+        for raw_setting_name, value in new_settings.items():
             setting_name = raw_setting_name.replace("_", "-")
 
             setting_already_exists = setting_name in self._instance_settings
@@ -190,7 +188,7 @@ class PluginMeta(type):
 
     def register_other_class_settings(cls):
         if hasattr(cls, '_other_class_settings') and cls._other_class_settings:
-            for other_class_key, other_class_settings in six.iteritems(cls._other_class_settings):
+            for other_class_key, other_class_settings in cls._other_class_settings.items():
                 if other_class_key not in PluginMeta._store_other_class_settings:
                     PluginMeta._store_other_class_settings[other_class_key] = {}
 
@@ -222,7 +220,7 @@ class PluginMeta(type):
         Make sure we don't attempt to iterate over an alias string thinking
         it's an array.
         """
-        if isinstance(alias_or_aliases, string_types):
+        if isinstance(alias_or_aliases, str):
             return [alias_or_aliases]
         else:
             return alias_or_aliases
@@ -234,7 +232,7 @@ class PluginMeta(type):
         if isinstance(class_or_class_name, type):
             return class_or_class_name
 
-        elif isinstance(class_or_class_name, string_types):
+        elif isinstance(class_or_class_name, str):
             if ":" in class_or_class_name:
                 mod_name, class_name = class_or_class_name.split(":")
 
@@ -279,11 +277,11 @@ class PluginMeta(type):
         return alias
 
     def register_plugins(cls, plugin_info):
-        for k, v in six.iteritems(plugin_info):
+        for k, v in plugin_info.items():
             cls.register_plugin(k.split("|"), v[0], v[1])
 
     def register_plugins_from_dict(cls, yaml_content, install_dir=None):
-        for alias, info_dict in six.iteritems(yaml_content):
+        for alias, info_dict in yaml_content.items():
             if ":" in alias:
                 _, alias = alias.split(":")
 
@@ -343,7 +341,8 @@ class PluginMeta(type):
         called once.
         """
         processed_aliases = set()
-        for alias in sorted(cls.plugins, cmp=lambda x,y: cmp(x.lower(), y.lower())):
+
+        for alias in sorted(cls.plugins, key=str.lower):
             if alias in processed_aliases:
                 # duplicate alias
                 continue

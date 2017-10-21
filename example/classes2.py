@@ -5,7 +5,6 @@ from example.classes import Data
 from example.utils import tempdir
 import csv
 import json
-import six
 
 ### "csv-subclass"
 class Csv(Data):
@@ -34,7 +33,7 @@ class Csv(Data):
     ### "csv-present"
     def present(self):
         kwargs = dict((k, v)
-                for k, v in six.iteritems(self.setting_values())
+                for k, v in self.setting_values().items()
                 if v and (k in self.setting('csv-settings'))
                 )
 
