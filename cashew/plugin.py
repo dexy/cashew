@@ -88,7 +88,7 @@ class Plugin(object):
             msg = "No setting named '%s'" % name_hyphen
             raise UserFeedback(msg)
 
-        if hasattr(value, 'startswith') and value.startswith("$"):
+        if isinstance(value, str) and value.startswith("$"):
             env_var = value.lstrip("$")
             if env_var in os.environ:
                 return os.getenv(env_var)
@@ -96,7 +96,7 @@ class Plugin(object):
                 msg = "'%s' is not defined in your environment" % env_var
                 raise UserFeedback(msg)
 
-        elif hasattr(value, 'startswith') and value.startswith("\$"):
+        elif isinstance(value, str) and value.startswith("\$"):
             return value.replace("\$", "$")
 
         else:
@@ -321,7 +321,7 @@ class PluginMeta(type):
         instance.update_settings(settings)
 
         if not instance.is_active():
-            raise InactivePlugin(instance)
+            raise InactivePlugin(alias)
 
         return instance
 
